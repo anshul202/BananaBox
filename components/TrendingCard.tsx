@@ -6,14 +6,14 @@ import MaskedView from '@react-native-masked-view/masked-view'
 
 interface TrendingCardProps {
   movie: {
-    movie_id: string;
+    movie_id: Number;
     title: string;
     poster_url: string;
   };
   index: number;
 }
 
-const TrendingCard = ({ movie: { movie_id, title, poster_url }, index }: TrendingCardProps) => {
+const TrendingCard = ({ movie: { movie_id, title, poster_url}, index }: TrendingCardProps) => {
   return (
     <Link href={`/movies/${movie_id}`} asChild>
       <TouchableOpacity 

@@ -1,50 +1,48 @@
-# Welcome to your Expo app 👋
+# BananaFlix 🎬🍌
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+BananaFlix is a React Native movie discovery app built with Expo and integrated with Appwrite backend services. It allows users to browse movies, view detailed information, and save their favorite movies with personalized watch statuses (`watching`, `watched`, `unwatched`).
 
-## Get started
+---
 
-1. Install dependencies
+## Features
 
-   ```bash
-   npm install
-   ```
+- Browse popular and trending movies using TMDB API
+- Detailed movie information with overview, genres, ratings, and production details
+- User authentication with Appwrite (email/password)
+- Save favorite movies with poster, title, and status tracking
+- Update watch status for saved movies
+- Protected routes for profile and saved movies screens
+- Search tracking analytics stored in Appwrite
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## Screenshots
 
-In the output, you'll find options to open the app in a
+*Add your app screenshots here*
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Tech Stack
 
-## Get a fresh project
+- **React Native** with Expo
+- **TypeScript**
+- **Appwrite** for backend (authentication, database)
+- **TMDB API** for movie data
+- **NativeWind** (Tailwind CSS for React Native) for styling
+- **Expo Router** for navigation
 
-When you're ready, run:
+---
 
-```bash
-npm run reset-project
-```
+## Getting Started
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Prerequisites
 
-## Learn more
+- Node.js (v16+ recommended)
+- Expo CLI (`npm install -g expo-cli`)
+- Appwrite instance (cloud or self-hosted)
+- TMDB API key
 
-To learn more about developing your project with Expo, look at the following resources:
+### Setup
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+1. **Clone the repository**
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
