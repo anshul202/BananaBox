@@ -1,75 +1,69 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import SearchBar from "@/components/SearchBar";
+import { icons } from "@/constants/icons";
+import { images } from "@/constants/images";
+import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import useFetch from "@/services/useFetch";
+import { fetchMovies } from "@/services/api";
+import MovieCard from "@/components/MovieCard";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 
-export default function HomeScreen() {
+
+export default function Index() {
+  const router=useRouter();
+  const {
+    data:movies,
+    loading:moviesLoading,
+    error:moviesError}=useFetch(()=>fetchMovies({query:""}));
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View className="flex-1 bg-primary relative">
+      <Image source={images.bg} className="absolute w-full z-0"/>
+      <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false} 
+      contentContainerStyle={{minHeight: "100%", paddingBottom: 10}}>
+
+        <Image source={icons.logo} className="w-12 h-10 mt-20 mb-5 mx-auto"/>
+        {moviesLoading ? (<ActivityIndicator
+        size={"large"}
+        color={"#0000ff"}
+        className="mt-10 self-center"
+        />):moviesError?(
+          <Text>Error: {moviesError?.message}</Text>
+        ):(
+          <View className="flex-1 mt-5">
+          <SearchBar
+          onPress={()=>router.push("/search")} 
+          placeholder="Search for a movie"
+          />
+          <>
+          <Text className="text-white text-lg font-semibold mt-5 mb-3">Latest Movies</Text>
+          <FlatList
+            data={movies}
+            renderItem={({item})=><MovieCard 
+              id={item.id}
+              title={item.title} 
+              poster_path={item.poster_path}
+              vote_average={item.vote_average}
+              release_date={item.release_date}
+              isadult={(item.adult==='true')}
+              original_language={item.original_language}
+            />}
+
+            keyExtractor={(item)=>item.id.toString()}
+            numColumns={3}
+            columnWrapperStyle={{
+              justifyContent:"flex-start",
+              gap:20,
+              paddingRight:5,
+              marginBottom:10
+            }}
+            className="mt-2 pb-32"
+            scrollEnabled={false}
+          />
+          </>
+        </View>
+        )}
+
+      </ScrollView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
