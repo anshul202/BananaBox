@@ -14,7 +14,6 @@ const MovieCard = ({ id, poster_path, release_date, title, vote_average ,isadult
   const posterUrl = poster_path 
     ? `https://image.tmdb.org/t/p/original${poster_path}`
     : 'https://placehold.co/800?text=Not+Available&font=roboto';
-    // console.log(isadult)
   return (
     <Link href={`/movies/${id}`} asChild>
       <TouchableOpacity 

@@ -15,6 +15,9 @@ import { fetchMovies } from "@/services/api";
 import SearchBar from "@/components/SearchBar";
 import { updateSearchCount } from "@/services/appwrite";
 
+
+
+
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const {
@@ -24,23 +27,28 @@ const Search = () => {
     reset,
     error: moviesError,
   } = useFetch(() => fetchMovies({ query: searchQuery }), true);
-  // console.log(movies[0])
-
+  
   useEffect(() => {
     const timeOutId = setTimeout(async () => {
       if (searchQuery.trim()) {
         await loadMovies();
-        if(movies?.length > 0 && movies?.[0]){
-          await updateSearchCount(searchQuery, movies[0]);
-        }
+      
       } else {
         reset();
       }
-    }, 500);
+    }, 1000);
     return () => {
       clearTimeout(timeOutId);
     };
   }, [searchQuery]);
+
+  useEffect(() => {
+    
+     if(movies?.length>0 && !moviesLoading) {
+          updateSearchCount(searchQuery, movies[0]);
+        }
+  }, [movies])
+  
 
   return (
     <View className="flex-1 bg-primary">
@@ -51,7 +59,7 @@ const Search = () => {
       />
 
       <FlatList
-        data={movies}
+        data={(searchQuery.trim() && !moviesLoading)?(movies || []) : []}
         renderItem={({ item }) => <MovieCard {...item} />}
         keyExtractor={(item) => item.id.toString()}
         className="px-5"
@@ -76,7 +84,7 @@ const Search = () => {
                 onChangeText={(text: string) => setSearchQuery(text)}
               />
             </View>
-
+            
             {moviesLoading && (
               <ActivityIndicator
                 size={"large"}

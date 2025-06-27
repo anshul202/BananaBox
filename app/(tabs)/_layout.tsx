@@ -1,7 +1,7 @@
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { Tabs } from "expo-router";
-import { Image, ImageBackground, Text, View } from "react-native";
+import { Image, ImageBackground, StatusBar, Text, View } from "react-native";
 
 
 const TabIcon=({focused,icons,title}:any)=>{
@@ -21,8 +21,9 @@ const TabIcon=({focused,icons,title}:any)=>{
 }
 
 export default function TabsLayout() {
-  console.log(images.highlight);
   return (
+    <>
+    <StatusBar hidden={true} />
     <Tabs
     screenOptions={{
       tabBarShowLabel:false,
@@ -101,5 +102,6 @@ export default function TabsLayout() {
       }}
       />
     </Tabs>
+    </>
   );
 }

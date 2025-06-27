@@ -20,17 +20,20 @@ export const fetchMovies=async({query}:{query:string})=>{
     return data.results;
 }
 
+export const fetchMovieDetails=async(movieId:string):Promise<MovieDetails>=>{
+    try {
+        const response=await fetch(`${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}`, {
+            method:'GET',
+            headers:TMDB_CONFIG.headers
+        })
+        if(!response.ok){
+            throw new Error(`Error fetching movie details: ${response.statusText}`);
+        }
+        const data=await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching movie details:", error);
+        throw error; // Re-throw the error to handle it in the calling function
+    }
+}
 
-// const url = 'https://api.themoviedb.org/3/tv/top_rated?language=en-US&page=1';
-// const options = {
-//   method: 'GET',
-//   headers: {
-//     accept: 'application/json',
-//     Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZDk0ZmJjZTEyZjViOTFiMDVmYmVlNzBlMjM0YzI3ZiIsIm5iZiI6MTc1MDk0NDMwNS40Niwic3ViIjoiNjg1ZDRhMzEzZWZhNTcyZWRlNzQ0NmY3Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.ZrrOhvMkXV9gBCy4H_eFQHyy4mrdsKp2laTy8SQWTLg'
-//   }
-// };
-
-// fetch(url, options)
-//   .then(res => res.json())
-//   .then(json => console.log(json))
-//   .catch(err => console.error(err));
