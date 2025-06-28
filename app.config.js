@@ -51,9 +51,11 @@ module.exports = {
       EXPO_PUBLIC_MOVIE_DATABASE_METRIC_COLLECTION: process.env.EXPO_PUBLIC_MOVIE_DATABASE_METRIC_COLLECTION,
       EXPO_PUBLIC_SAVED_MOVIE: process.env.EXPO_PUBLIC_SAVED_MOVIE,
       // EAS Build automatically sets this variable, so we can use it to link our project
-      eas: {
-        projectId: process.env.EAS_PROJECT_ID ?? "cba12230-5966-4fa8-b727-21b165c65a4a" // Replace with your actual project ID as a fallback
+      
+      "eas": {
+        "projectId": "976f2453-c56b-437b-bb14-a405fd6ba857"
       }
+    
     }
   }
 };

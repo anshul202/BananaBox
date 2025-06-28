@@ -32,16 +32,17 @@ const collection_user_saved = process.env.EXPO_PUBLIC_SAVED_MOVIE!;
 // --- STEP 3: REBUILD THE config OBJECT TO READ FROM Constants ---
 // This config object now reads from the 'extra' block in your app.config.js
 export const config = {
-  endpoint: `https://fra.cloud.appwrite.io/v1`,
-  project: '685e3425002ab1cbd9e8',
+  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
+  project: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!,
   db: {
-    movies:`685e44e7000110ae82a8`,
+    movies: process.env.EXPO_PUBLIC_MOVIE_DATABASE!,
   },
   collections: {
-    metrics: `685e48700030a330fe18`,
-    saved_movies: `685eb312003c2fca46ee`,
-  }
+    metrics: process.env.EXPO_PUBLIC_MOVIE_DATABASE_METRIC_COLLECTION!,
+    saved_movies: process.env.EXPO_PUBLIC_SAVED_MOVIE!,
+  },
 };
+
 
 // --- From here, the rest of your file works without changes, but we add a safety check ---
 
