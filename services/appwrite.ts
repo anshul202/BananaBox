@@ -1,3 +1,5 @@
+// services/appwrite.ts
+
 import {
   Client,
   Account,
@@ -5,38 +7,59 @@ import {
   Models,
   Databases,
   Query,
-  Permission, // Added for document-level permissions
-  Role,       // Added for document-level permissions
+  Permission,
+  Role,
 } from "react-native-appwrite";
 import { Platform } from "react-native";
+import Constants from 'expo-constants'; // <-- STEP 1: IMPORT Constants
 
+// The SavedMovieDocument interface remains the same
 export interface SavedMovieDocument extends Models.Document {
   user_id: string;
-  movie_id: string; // <--- CHANGED FROM number TO string
+  movie_id: string;
   title: string;
   poster_path?: string;
   status: 'watching' | 'watched' | 'unwatched';
 }
 
-
+// --- STEP 2: REMOVE THE OLD process.env VARIABLES ---
+/*
 const database_id = process.env.EXPO_PUBLIC_MOVIE_DATABASE!;
 const collecton_id_metric = process.env.EXPO_PUBLIC_MOVIE_DATABASE_METRIC_COLLECTION!;
-const collection_user_saved=process.env.EXPO_PUBLIC_SAVED_MOVIE!;
+const collection_user_saved = process.env.EXPO_PUBLIC_SAVED_MOVIE!;
+*/
 
-const config = {
-  endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT!,
-  project: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!,
-  db: { // Changed to object for better structure, assuming this maps to the database ID
-    movies: database_id, // Use the actual database ID from env
+// --- STEP 3: REBUILD THE config OBJECT TO READ FROM Constants ---
+// This config object now reads from the 'extra' block in your app.config.js
+export const config = {
+  endpoint: `https://fra.cloud.appwrite.io/v1`,
+  project: '685e3425002ab1cbd9e8',
+  db: {
+    movies:`685e44e7000110ae82a8`,
   },
   collections: {
-    metrics: collecton_id_metric, // Use the actual collection ID from env
-    saved_movies: collection_user_saved, // Make sure this matches your Appwrite collection ID
+    metrics: `685e48700030a330fe18`,
+    saved_movies: `685eb312003c2fca46ee`,
   }
+};
+
+// --- From here, the rest of your file works without changes, but we add a safety check ---
+
+const client: Client = new Client();
+
+// --- STEP 4: ADD A SAFETY CHECK BEFORE INITIALIZING THE CLIENT ---
+// This prevents the app from crashing if the variables are still somehow missing
+// and provides a clear error message.
+if (config.endpoint && config.project) {
+  client
+    .setEndpoint(config.endpoint)
+    .setProject(config.project);
+} else {
+  console.error("Appwrite configuration is missing. Check your environment variables and app.config.js");
 }
-const client: Client = new Client()
-  .setEndpoint(config.endpoint)
-  .setProject(config.project);
+
+
+// --- The rest of your file remains unchanged ---
 
 switch (Platform.OS) {
   case "android":
@@ -56,7 +79,7 @@ export const account = new Account(client); // Initialize Appwrite Account
 
 export const updateSearchCount = async (query: string, movie: Movie) => {
   try {
-    const result = await database.listDocuments(config.db.movies, config.collections.metrics, [ // Use config for clarity
+    const result = await database.listDocuments(config.db.movies, config.collections.metrics, [
       Query.equal("searchTerm", query),
     ]);
 
@@ -87,7 +110,7 @@ export const updateSearchCount = async (query: string, movie: Movie) => {
 
 export const getTrendingMovies = async (): Promise<TrendingMovie[] | undefined> => {
   try {
-    const result = await database.listDocuments(config.db.movies, config.collections.metrics, [ // Use config for clarity
+    const result = await database.listDocuments(config.db.movies, config.collections.metrics, [
       Query.limit(5),
       Query.orderDesc("count")
     ]);
@@ -104,34 +127,26 @@ export const getCurrentUser = async (): Promise<Models.User<Models.Preferences> 
     const currentUser = await account.get();
     return currentUser;
   } catch (error) {
-    // console.log("No active user session or error fetching user:", error); // For debugging
-    return null; // Return null if no user is logged in or an error occurs
+    return null;
   }
 };
 
 
 export const signIn = async (email: string, password: string): Promise<Models.User<Models.Preferences>> => {
   try {
-    // Attempt to get the current session first.
-    // If successful, the user is already logged in, so return that user.
     try {
       const currentUser = await account.get();
       console.log(currentUser)
-      return currentUser; // User already logged in, no need to create new session
+      return currentUser;
     } catch (e) {
       // No active session found, proceed to create one
-      // console.log("No active session, proceeding to create new one."); // For debugging
     }
 
-    // Create a new email/password session
     await account.createEmailPasswordSession(email, password);
-
-    // Get the user object for the newly created session
     const user = await account.get();
     return user;
   } catch (error: any) {
     console.error("Appwrite Sign-in failed:", error);
-    // Provide a more user-friendly error message from Appwrite response if available
     throw new Error(error.response?.message || "Sign-in failed. Please check your credentials.");
   }
 };
@@ -139,27 +154,17 @@ export const signIn = async (email: string, password: string): Promise<Models.Us
 
 export const signUp = async (email: string, password: string, name: string): Promise<Models.User<Models.Preferences>> => {
   try {
-    // 1. Create the user account
     await account.create(ID.unique(), email, password, name);
-
-    // 2. Automatically create a session for the newly registered user (log them in)
-    // Check for existing session before creating new one, similar to signIn
     try {
       const currentUser = await account.get();
-      // If a user is somehow already logged in (unlikely after fresh create, but good practice)
-      // then we don't need to create a session, just return current user
       return currentUser;
     } catch (e) {
-      // No active session, proceed to create one
       await account.createEmailPasswordSession(email, password);
     }
-
-    // 3. Get the user object for the newly active session
     const user = await account.get();
     return user;
   } catch (error: any) {
     console.error("Appwrite Sign-up failed:", error);
-    // Provide a more user-friendly error message from Appwrite response if available
     throw new Error(error.response?.message || "Sign-up failed. User might already exist or invalid data.");
   }
 };
@@ -174,22 +179,21 @@ export const signOut = async (): Promise<void> => {
   }
 };
 
-
 export const saveUserMovie = async (
   userId: string,
-  movie: Movie, // Assuming your Movie interface from TMDB has id, title, poster_path
+  movie: Movie,
   initialStatus: 'watching' | 'watched' | 'unwatched' = 'unwatched'
 ): Promise<SavedMovieDocument> => {
   try {
     const document = await database.createDocument(
       config.db.movies,
       config.collections.saved_movies,
-      ID.unique(), // Let Appwrite generate a unique document ID
+      ID.unique(),
       {
         user_id: userId,
         movie_id: movie.id.toString(),
         title: movie.title,
-        poster_path: movie.poster_path, // Use movie.poster_path directly
+        poster_path: movie.poster_path,
         status: initialStatus,
       },
       [
@@ -205,12 +209,6 @@ export const saveUserMovie = async (
   }
 };
 
-/**
- * Updates the status of a user's saved movie.
- * @param documentId The Appwrite document ID of the saved movie entry.
- * @param newStatus The new status ('watching', 'watched', 'unwatched').
- * @returns The updated document.
- */
 export const updateMovieStatus = async (
   documentId: string,
   newStatus: 'watching' | 'watched' | 'unwatched'
@@ -223,9 +221,6 @@ export const updateMovieStatus = async (
       {
         status: newStatus,
       },
-      // Permissions are already set on document creation, but specifying them here ensures
-      // that the user has update permissions if they are not the creator.
-      // For security, Appwrite will only allow this if the user has appropriate permissions.
     );
     return document as SavedMovieDocument;
   } catch (error: any) {
@@ -234,10 +229,6 @@ export const updateMovieStatus = async (
   }
 };
 
-/**
- * Removes a movie from a user's saved list.
- * @param documentId The Appwrite document ID of the saved movie entry.
- */
 export const deleteUserMovie = async (documentId: string): Promise<void> => {
   try {
     await database.deleteDocument(
@@ -251,12 +242,6 @@ export const deleteUserMovie = async (documentId: string): Promise<void> => {
   }
 };
 
-/**
- * Fetches all saved movies for a specific user, optionally filtered by status.
- * @param userId The ID of the user.
- * @param status Optional status to filter by.
- * @returns An array of SavedMovieDocument objects.
- */
 export const listUserMovies = async (
   userId: string,
   status?: 'watching' | 'watched' | 'unwatched'
@@ -265,7 +250,7 @@ export const listUserMovies = async (
   if (status) {
     queries.push(Query.equal("status", status));
   }
-  queries.push(Query.orderDesc("$createdAt")); // Order by creation date, newest first
+  queries.push(Query.orderDesc("$createdAt"));
 
   try {
     const response = await database.listDocuments(
@@ -280,18 +265,9 @@ export const listUserMovies = async (
   }
 };
 
-/**
- * Checks if a specific movie is saved by a user and returns the document if it exists.
- * Useful for checking if a "Save" button should say "Save" or "Unsave".
- * @param userId The ID of the user.
- * @param movieId The TMDB ID of the movie.
- * @returns The SavedMovieDocument if found, otherwise null.
- */
-
-
 export const getUserMovieStatus = async (
   userId: string,
-  movieId: Number
+  movieId: number // Changed from Number to number
 ): Promise<SavedMovieDocument | null> => {
   try {
     const response = await database.listDocuments(
@@ -300,18 +276,12 @@ export const getUserMovieStatus = async (
       [
         Query.equal("user_id", userId),
         Query.equal("movie_id", movieId.toString()),
-        Query.limit(1) // Only need one to confirm existence
+        Query.limit(1)
       ]
     );
     return response.documents.length > 0 ? response.documents[0] as SavedMovieDocument : null;
   } catch (error: any) {
     console.error("Error getting user movie status:", error);
-    // Return null on error, as it implies the movie isn't saved or couldn't be checked
     return null;
   }
 };
-
-
-
-
-

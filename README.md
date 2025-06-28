@@ -1,6 +1,6 @@
-# BananaFlix 🎬🍌
+# BananaBox 🎬🍌
 
-BananaFlix is a React Native movie discovery app built with Expo and integrated with Appwrite backend services. It allows users to browse movies, view detailed information, and save their favorite movies with personalized watch statuses (`watching`, `watched`, `unwatched`).
+BananaBox is a React Native movie discovery app built with Expo and integrated with Appwrite backend services. It allows users to browse movies, view detailed information, and save their favorite movies with personalized watch statuses (`watching`, `watched`, `unwatched`).
 
 ---
 

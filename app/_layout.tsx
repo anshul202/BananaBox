@@ -4,6 +4,8 @@ import * as NavigationBar from 'expo-navigation-bar';
 import { useEffect } from "react";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { ActivityIndicator, Text, View } from "react-native";
+// app/_layout.tsx
+
 
 SplashScreen.preventAutoHideAsync();
 

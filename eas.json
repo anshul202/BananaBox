@@ -1,0 +1,41 @@
+{
+  "cli": {
+    "version": ">= 11.0.3"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+      ,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_READ_ACCESS_KEY": "EXPO_PUBLIC_API_READ_ACCESS_KEY",
+        "EXPO_PUBLIC_API_KEY": "EXPO_PUBLIC_API_KEY",
+        "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "EXPO_PUBLIC_APPWRITE_PROJECT_ID",
+        "EXPO_PUBLIC_APPWRITE_ENDPOINT": "EXPO_PUBLIC_APPWRITE_ENDPOINT",
+        "EXPO_PUBLIC_MOVIE_DATABASE": "EXPO_PUBLIC_MOVIE_DATABASE",
+        "EXPO_PUBLIC_MOVIE_DATABASE_METRIC_COLLECTION": "EXPO_PUBLIC_MOVIE_DATABASE_METRIC_COLLECTION",
+        "EXPO_PUBLIC_SAVED_MOVIE": "EXPO_PUBLIC_SAVED_MOVIE"
+      }
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_API_READ_ACCESS_KEY": "EXPO_PUBLIC_API_READ_ACCESS_KEY",
+        "EXPO_PUBLIC_API_KEY": "EXPO_PUBLIC_API_KEY",
+        "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "EXPO_PUBLIC_APPWRITE_PROJECT_ID",
+        "EXPO_PUBLIC_APPWRITE_ENDPOINT": "EXPO_PUBLIC_APPWRITE_ENDPOINT",
+        "EXPO_PUBLIC_MOVIE_DATABASE": "EXPO_PUBLIC_MOVIE_DATABASE",
+        "EXPO_PUBLIC_MOVIE_DATABASE_METRIC_COLLECTION": "EXPO_PUBLIC_MOVIE_DATABASE_METRIC_COLLECTION",
+        "EXPO_PUBLIC_SAVED_MOVIE": "EXPO_PUBLIC_SAVED_MOVIE"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
