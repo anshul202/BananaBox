@@ -18,7 +18,14 @@ BananaBox is a React Native movie discovery app built with Expo and integrated w
 
 ## Screenshots
 
-*Add your app screenshots here*
+
+![Image](https://github.com/user-attachments/assets/4e254a97-4eb5-495f-87b1-c701fffefd83)
+
+![Image](https://github.com/user-attachments/assets/6851f0c2-da90-4b12-849a-9282483ad46c)
+
+![Image](https://github.com/user-attachments/assets/b5af77e9-4c29-4a16-b733-88023c41e276)
+
+![Image](https://github.com/user-attachments/assets/e72661e4-11b6-4a86-9b60-3e27dfc0eeb7)
 
 ---
 
